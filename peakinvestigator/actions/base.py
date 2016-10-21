@@ -1,5 +1,6 @@
 
 from abc import ABCMeta, abstractmethod
+import decimal
 
 import simplejson
 
@@ -36,7 +37,7 @@ class BaseAction(metaclass=ABCMeta):
         if '<' in response:
             raise Exception("Given response appears to be HTML, not JSON.")
 
-        self._data = simplejson.loads(response)
+        self._data = simplejson.loads(response, parse_float=decimal.Decimal)
 
 
     def precheck(self):
