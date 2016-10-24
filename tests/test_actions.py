@@ -43,6 +43,7 @@ class TestPiVersionsAction(unittest.TestCase):
         self.assertEqual(self.action.last_used, "")
         self.assertEqual(self.action.count, 2)
         self.assertListEqual(self.action.versions, ["1.2", "1.0.0"])
+        self.assertIsNone(self.action.error)
         
 
     def test_error(self):

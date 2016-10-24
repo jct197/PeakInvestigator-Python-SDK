@@ -66,6 +66,6 @@ class BaseAction(metaclass=ABCMeta):
         
         self.precheck()
         if "Error" not in self._data:
-            raise Exception("An error has not occurred")
+            return None
 
         return self._data["Message"]
