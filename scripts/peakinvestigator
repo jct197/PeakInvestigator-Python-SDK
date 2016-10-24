@@ -1,0 +1,124 @@
+#!/usr/bin/env python3
+
+import sys, os
+import sqlite3
+import math
+
+import numpy
+
+from peakinvestigator import *
+from peakinvestigator.actions import *
+
+class PeakInvestigator(object):
+	VERSION = "4.2"
+
+	def __init__(self, args):
+		self._args = args
+		
+		modes = ["submit", "list", "fetch"]
+		mode_args = [ getattr(args, x) for x in modes ]
+		
+		self._modes = [ x for x, y in zip(modes, mode_args) if y is True ]
+		self._username = os.environ["USERNAME"]
+		self._password = os.environ["PASSWORD"]
+		self._project = os.environ["PROJECT"]
+		
+		print(self._username)
+	
+	def run(self):
+		if len(self._modes) != 1:
+			print("ERROR: Invalid number of modes specified.", file=sys.stderr)
+			sys.exit(-1)
+			
+		print("Running", self._modes[0])
+		if self._modes[0] == "submit":
+			[ self._submit(x) for x in self._args.files ]
+		
+	
+	def _submit(self, filename):
+		data = numpy.loadtxt(filename)
+		min_mass = math.floor(data[0, 0])
+		max_mass = math.ceil(data[-1, 0])
+		lines = len(data)
+		
+		service = PeakInvestigatorSaaS()
+		action = PiVersionsAction(self.VERSION, self._username, self._password)
+		response = service.execute(action)
+		action.process_response(response)
+		
+		action = InitAction(self.VERSION, self._username, self._password,
+								self._project, action.current_version)
+		action.with_scan_count(1, 0).with_meta_data(min_mass, max_mass, lines)
+		
+		response = service.execute(action)
+		action.process_response(response)
+		
+		if type(action.error) is str:
+			print("ERROR: {error}.".format(error=action.error), file=sys.stderr)
+			sys.exit(-2)
+		
+		if action.funds < max([ x["Cost"] for x in action.estimated_costs ]):
+			print("ERROR: insufficient funds.", file=sys.stderr)
+			sys.exit(-2);
+
+		job = action.job
+		print(action.response_time_objectives)
+		rto = sorted(action.response_time_objectives)[0]
+		
+		action = RunAction(self.VERSION, self._username, self._password,
+								job, rto).with_files(filename)
+								
+		response = service.execute(action)
+		action.process_response(response)
+		
+		if type(action.error) is str:
+			print("ERROR: {error}.".format(error=action.error), file=sys.stderr)
+			sys.exit(-2)
+		
+		print("Running job: ", action.job)
+
+		db = self._open_database(self._args.database)
+		self._save_into_db(db, action.job, filename)
+			
+	def _open_database(self, filename):
+		 db = sqlite3.connect(filename)
+		 cursor = db.cursor()
+		 
+		 cursor.execute("""CREATE TABLE IF NOT EXISTS Jobs
+		 					( JobID TEXT UNIQUE NOT NULL, 
+		 					Production TEXT NOT NULL, 
+		 					Calibration TEXT DEFAULT NULL)""")
+		 db.commit()
+		 
+		 return db
+	
+	def _save_into_db(self, db, job, filename):
+		cursor = db.cursor()
+		cursor.execute("""INSERT INTO Jobs (JobID, Production) VALUES
+							(?, ?)""", (job, filename))
+		db.commit()
+		
+if __name__ == "__main__":
+	from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+	from os.path import expanduser
+
+	parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
+	parser.add_argument("-s", "--submit", action="store_true",
+							help="Submit one or more files for processing.")
+	parser.add_argument("-l", "--list", action="store_true",
+							help="List jobs saved to database.")
+	parser.add_argument("-f", "--fetch", action="store_true",
+							help="Fetch results for one or more jobs.")
+	parser.add_argument("-db", "--database",
+							help="File to record job information",
+							default=expanduser("~/.peakinvestigator.db"))
+	parser.add_argument("files", nargs="*",
+							help="Files to submit or jobs to fetch.")
+	
+	args = parser.parse_args()
+	print(args)
+	app = PeakInvestigator(args)
+	app.run()
+	
+	
+ 
