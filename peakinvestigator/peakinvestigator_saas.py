@@ -25,15 +25,28 @@ class PeakInvestigatorSaaS(object):
     
     """
 
-    def __init__(self, server):
-        """Constructor.
-          server - a string containing the address of the server
-                     (e.g. https://peakinvestigator.veritomyx.com). It should
-                     NOT include any path.
+    def __init__(self, *args, **kwds):
+        """Constructor. If the 'server' keyword is specified, that is used for 
+        the API calls. Otherwise, it will try to use the first argument. Note 
+        that only the hostname without any path should be specified. If neither
+        keywords or arguments are specified, it will default to
+        https://peakinvestigator.veritomyx.com.
+        
+        https:// will be pre-pended if it is missing.
                      
         """
         
-        self.server = server
+        if "server" in kwds:
+            server = kwds["server"]
+        elif len(args) > 0:
+            server = args[0]
+        else:
+            server = "https://peakinvestigator.veritomyx.com"
+            
+        if "http" not in server:
+            server = "https://" + server
+            
+        self._server = server
         
     def execute(self, action):
         """Call the API with the given action. An action should implement a
@@ -45,7 +58,7 @@ class PeakInvestigatorSaaS(object):
         
         """
         
-        response = requests.post(self.server + "/api/", data=action.build_query())
+        response = requests.post(self._server + "/api/", data=action.build_query())
         return response.text
         
         
