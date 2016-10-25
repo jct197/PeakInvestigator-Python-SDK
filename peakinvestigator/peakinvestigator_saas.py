@@ -7,6 +7,7 @@
 # of the BSD 3-Clause license.
 
 import requests
+from paramiko.client import SSHClient, WarningPolicy
 
 class PeakInvestigatorSaaS(object):
     """"An object for interacting with the PeakInvestigator API. See 
@@ -61,4 +62,26 @@ class PeakInvestigatorSaaS(object):
         response = requests.post(self._server + "/api/", data=action.build_query())
         return response.text
         
+    def upload(self, sftp_action, local_file, remote_file, callback=None):
+        """Upload a file to a SFTP server."""
         
+        with SSHClient() as ssh:
+            ssh.set_missing_host_key_policy(WarningPolicy())
+            ssh.connect(sftp_action.host, port=sftp_action.port,
+                            username=sftp_action.sftp_username,
+                            password=sftp_action.sftp_password)
+            with ssh.open_sftp() as sftp:
+                sftp.put(local_file, remote_file, callback)
+
+
+    def download(self, sftp_action, remote_file, local_file, callback=None):
+        """Download a file from a SFTP server."""
+        
+        with SSHClient() as ssh:
+            ssh.set_missing_host_key_policy(WarningPolicy())
+            ssh.connect(sftp_action.host, port=sftp_action.port,
+                            username=sftp_action.sftp_username,
+                            password=sftp_action.sftp_password)
+            with ssh.open_sftp() as sftp:
+                sftp.get(remote_file, local_file, callback)
+    
