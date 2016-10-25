@@ -44,11 +44,25 @@ class PeakInvestigator(object):
 			[ self._fetch(x) for x in self._args.files ]
 		if self._modes[0] == "delete":
 			[ self._delete(x) for x in self._args.files ]
+		if self._modes[0] == "list":
+			self._list()
 
 	def _execute(self, action):
 		response = self._service.execute(action)
 		action.process_response(response)
 
+	def _list(self):
+		db = self._open_database(self._args.database)
+		jobs = self._get_jobs_from_db(db)
+		
+		for job in jobs:
+			status_action = StatusAction(self.VERSION, self._username,
+											self._password, job[0])
+			self._execute(status_action)
+			print("{job}\t{status}\t{file}".format(job=job[0],
+													file=job[1],
+													status=status_action.status))
+		
 	def _init(self, filename):
 		versions_action = PiVersionsAction(self.VERSION, self._username,
 											self._password)
@@ -161,7 +175,7 @@ class PeakInvestigator(object):
 
 	def _get_jobs_from_db(self, db):
 		cursor = db.cursor()
-		cursor.execute("""SELECT JobID FROM Jobs""")
+		cursor.execute("""SELECT * FROM Jobs""")
 		return cursor.fetchall()
 
 	def _delete_from_db(self, db, job):
