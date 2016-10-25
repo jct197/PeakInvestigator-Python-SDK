@@ -49,21 +49,31 @@ class PeakInvestigator(object):
 		response = self._service.execute(action)
 		action.process_response(response)
 
-	def _submit(self, filename):
+	def _init(self, filename):
+		versions_action = PiVersionsAction(self.VERSION, self._username,
+											self._password)
+		self._execute(versions_action)
+		if type(versions_action.error) is str:
+			print("ERROR: {error}.".format(error=versions_action.error),
+					file=stderr)
+			sys.exit(-2)
+		
 		data = numpy.loadtxt(filename)
 		min_mass = math.floor(data[0, 0])
 		max_mass = math.ceil(data[-1, 0])
 		lines = len(data)
 		
-		versions_action = PiVersionsAction(self.VERSION, self._username,
-											self._password)
-		self._execute(versions_action)
-		
 		init_action = InitAction(self.VERSION, self._username, self._password,
 								self._project, versions_action.current_version)
 		init_action.with_scan_count(1, 0).with_meta_data(min_mass, max_mass, lines)
-		self._execute(init_action)
 		
+		self._execute(init_action)
+		return init_action
+		
+	def _submit(self, filename):
+		
+		init_action = self._init(filename)
+
 		if type(init_action.error) is str:
 			print("ERROR: {error}.".format(error=init_action.error), file=sys.stderr)
 			sys.exit(-2)
