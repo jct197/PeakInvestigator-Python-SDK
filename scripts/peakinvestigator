@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys, os
+import posixpath
 import sqlite3
 import math
 
@@ -11,19 +12,18 @@ from peakinvestigator.actions import *
 
 class PeakInvestigator(object):
 	VERSION = "4.2"
+	MODES = ["submit", "list", "fetch", "fetch_all", "delete"]
 
 	def __init__(self, args):
 		self._args = args
 		
-		modes = ["submit", "list", "fetch"]
-		mode_args = [ getattr(args, x) for x in modes ]
 		
-		self._modes = [ x for x, y in zip(modes, mode_args) if y is True ]
+		mode_args = [ getattr(args, x) for x in self.MODES ]
+		
+		self._modes = [ x for x, y in zip(self.MODES, mode_args) if y is True ]
 		self._username = os.environ["USERNAME"]
 		self._password = os.environ["PASSWORD"]
 		self._project = os.environ["PROJECT"]
-		
-		print(self._username)
 	
 	def run(self):
 		if len(self._modes) != 1:
@@ -33,8 +33,15 @@ class PeakInvestigator(object):
 		print("Running", self._modes[0])
 		if self._modes[0] == "submit":
 			[ self._submit(x) for x in self._args.files ]
-		
-	
+		if self._modes[0] == "fetch_all":
+			db = self._open_database(self._args.database)
+			[ self._fetch(x[0]) for x in self._get_jobs_from_db(db) ]
+			[ self._delete(x[0]) for x in self._get_jobs_from_db(db) ]
+		if self._modes[0] == "fetch":
+			[ self._fetch(x) for x in self._args.files ]
+		if self._modes[0] == "delete":
+			[ self._delete(x) for x in self._args.files ]
+
 	def _submit(self, filename):
 		data = numpy.loadtxt(filename)
 		min_mass = math.floor(data[0, 0])
@@ -79,7 +86,47 @@ class PeakInvestigator(object):
 
 		db = self._open_database(self._args.database)
 		self._save_into_db(db, action.job, filename)
+	
+	def _fetch(self, job):
+		service = PeakInvestigatorSaaS()
+		status = StatusAction(self.VERSION, self._username, self._password, job)
+		
+		response = service.execute(status)
+		status.process_response(response)
+		
+		if not status.done:
+			print("INFO: Job {job} is not done.".format(job=job))
+			return
 			
+		print("INFO: Fetching results for job {}.".format(job))
+
+		sftp = SftpAction(self.VERSION, self._username, self._password,
+							self._project)
+		response = service.execute(sftp)
+		sftp.process_response(response)
+
+		service.download(sftp, status.results_file,
+							posixpath.split(status.results_file)[-1])
+		service.download(sftp, status.log_file,
+							posixpath.split(status.log_file)[-1])
+		
+	def _delete(self, job):
+		service = PeakInvestigatorSaaS()
+		delete = DeleteAction(self.VERSION, self._username, self._password, job)
+		
+		response = service.execute(delete)
+		delete.process_response(response)
+		
+		if delete.error is not None:
+			print("ERROR: {}".format(delete.error), file=sys.stderr)
+			return
+		
+		print("INFO: Deleted job {}.".format(job))
+			
+		db = self._open_database(self._args.database)
+		self._delete_from_db(db, job)
+
+		
 	def _open_database(self, filename):
 		 db = sqlite3.connect(filename)
 		 cursor = db.cursor()
@@ -97,6 +144,17 @@ class PeakInvestigator(object):
 		cursor.execute("""INSERT INTO Jobs (JobID, Production) VALUES
 							(?, ?)""", (job, filename))
 		db.commit()
+
+	def _get_jobs_from_db(self, db):
+		cursor = db.cursor()
+		cursor.execute("""SELECT JobID FROM Jobs""")
+		return cursor.fetchall()
+
+	def _delete_from_db(self, db, job):
+		cursor = db.cursor()
+		cursor.execute("""DELETE FROM Jobs WHERE JobID = ?""", (job,))
+		db.commit()
+
 		
 if __name__ == "__main__":
 	from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
@@ -109,6 +167,11 @@ if __name__ == "__main__":
 							help="List jobs saved to database.")
 	parser.add_argument("-f", "--fetch", action="store_true",
 							help="Fetch results for one or more jobs.")
+	parser.add_argument("-fa", "--fetch-all", action="store_true",
+							help="""Fetch all available results in database. 
+									Jobs are deleted from server and database.""")
+	parser.add_argument("-d", "--delete", action="store_true",
+							help="Delete one or more jobs.")
 	parser.add_argument("-db", "--database",
 							help="File to record job information",
 							default=expanduser("~/.peakinvestigator.db"))
@@ -116,7 +179,7 @@ if __name__ == "__main__":
 							help="Files to submit or jobs to fetch.")
 	
 	args = parser.parse_args()
-	print(args)
+
 	app = PeakInvestigator(args)
 	app.run()
 	
