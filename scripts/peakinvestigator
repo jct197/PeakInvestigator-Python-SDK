@@ -49,43 +49,44 @@ class PeakInvestigator(object):
 		lines = len(data)
 		
 		service = PeakInvestigatorSaaS()
-		action = PiVersionsAction(self.VERSION, self._username, self._password)
-		response = service.execute(action)
-		action.process_response(response)
+		versions_action = PiVersionsAction(self.VERSION, self._username,
+											self._password)
+		response = service.execute(versions_action)
+		versions_action.process_response(response)
 		
-		action = InitAction(self.VERSION, self._username, self._password,
-								self._project, action.current_version)
-		action.with_scan_count(1, 0).with_meta_data(min_mass, max_mass, lines)
+		init_action = InitAction(self.VERSION, self._username, self._password,
+								self._project, versions_action.current_version)
+		init_action.with_scan_count(1, 0).with_meta_data(min_mass, max_mass, lines)
 		
-		response = service.execute(action)
-		action.process_response(response)
+		response = service.execute(init_action)
+		init_action.process_response(response)
 		
-		if type(action.error) is str:
-			print("ERROR: {error}.".format(error=action.error), file=sys.stderr)
+		if type(init_action.error) is str:
+			print("ERROR: {error}.".format(error=init_action.error), file=sys.stderr)
 			sys.exit(-2)
 		
-		if action.funds < max([ x["Cost"] for x in action.estimated_costs ]):
+		if init_action.funds < max([ x["Cost"] for x in init_action.estimated_costs ]):
 			print("ERROR: insufficient funds.", file=sys.stderr)
 			sys.exit(-2);
 
-		job = action.job
-		print(action.response_time_objectives)
-		rto = sorted(action.response_time_objectives)[0]
+		rto = sorted(init_action.response_time_objectives)[0]
 		
-		action = RunAction(self.VERSION, self._username, self._password,
-								job, rto).with_files(filename)
+		sftp_action = SftpAction(self.VERSION, self._username, self._password,
+									self._project)
+		run_action = RunAction(self.VERSION, self._username, self._password,
+								init_action.job, rto).with_files(filename)
 								
-		response = service.execute(action)
-		action.process_response(response)
+		response = service.execute(run_action)
+		run_action.process_response(response)
 		
-		if type(action.error) is str:
-			print("ERROR: {error}.".format(error=action.error), file=sys.stderr)
+		if type(run_action.error) is str:
+			print("ERROR: {error}.".format(error=run_action.error), file=sys.stderr)
 			sys.exit(-2)
 		
-		print("Running job: ", action.job)
+		print("Running job: ", run_action.job)
 
 		db = self._open_database(self._args.database)
-		self._save_into_db(db, action.job, filename)
+		self._save_into_db(db, run_action.job, filename)
 	
 	def _fetch(self, job):
 		service = PeakInvestigatorSaaS()
