@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys, os
+import os.path
 import posixpath
 import sqlite3
 import math
@@ -73,6 +74,11 @@ class PeakInvestigator(object):
 		
 		sftp_action = SftpAction(self.VERSION, self._username, self._password,
 									self._project)
+		response = service.execute(sftp_action)
+		sftp_action.process_response(response)
+		service.upload(sftp_action, filename,
+						posixpath.join(sftp_action.directory, os.path.split(filename)[-1]))
+		
 		run_action = RunAction(self.VERSION, self._username, self._password,
 								init_action.job, rto).with_files(filename)
 								
