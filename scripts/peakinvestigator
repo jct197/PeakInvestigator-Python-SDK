@@ -42,6 +42,7 @@ class PeakInvestigator(object):
 			[ self._delete(x[0]) for x in self._get_jobs_from_db(db) ]
 		if self._modes[0] == "fetch":
 			[ self._fetch(x) for x in self._args.files ]
+			[ self._delete(x) for x in self._args.files ]
 		if self._modes[0] == "delete":
 			[ self._delete(x) for x in self._args.files ]
 		if self._modes[0] == "list":
