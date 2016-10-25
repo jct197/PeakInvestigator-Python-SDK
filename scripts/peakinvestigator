@@ -15,6 +15,8 @@ class PeakInvestigator(object):
 	VERSION = "4.2"
 	MODES = ["submit", "list", "fetch", "fetch_all", "delete"]
 
+	_service = PeakInvestigatorSaaS()
+
 	def __init__(self, args):
 		self._args = args
 		
@@ -43,24 +45,24 @@ class PeakInvestigator(object):
 		if self._modes[0] == "delete":
 			[ self._delete(x) for x in self._args.files ]
 
+	def _execute(self, action):
+		response = self._service.execute(action)
+		action.process_response(response)
+
 	def _submit(self, filename):
 		data = numpy.loadtxt(filename)
 		min_mass = math.floor(data[0, 0])
 		max_mass = math.ceil(data[-1, 0])
 		lines = len(data)
 		
-		service = PeakInvestigatorSaaS()
 		versions_action = PiVersionsAction(self.VERSION, self._username,
 											self._password)
-		response = service.execute(versions_action)
-		versions_action.process_response(response)
+		self._execute(versions_action)
 		
 		init_action = InitAction(self.VERSION, self._username, self._password,
 								self._project, versions_action.current_version)
 		init_action.with_scan_count(1, 0).with_meta_data(min_mass, max_mass, lines)
-		
-		response = service.execute(init_action)
-		init_action.process_response(response)
+		self._execute(init_action)
 		
 		if type(init_action.error) is str:
 			print("ERROR: {error}.".format(error=init_action.error), file=sys.stderr)
@@ -74,16 +76,15 @@ class PeakInvestigator(object):
 		
 		sftp_action = SftpAction(self.VERSION, self._username, self._password,
 									self._project)
-		response = service.execute(sftp_action)
-		sftp_action.process_response(response)
-		service.upload(sftp_action, filename,
+		self._execute(sftp_action)
+
+		self._service.upload(sftp_action, filename,
 						posixpath.join(sftp_action.directory, os.path.split(filename)[-1]))
 		
 		run_action = RunAction(self.VERSION, self._username, self._password,
 								init_action.job, rto).with_files(filename)
 								
-		response = service.execute(run_action)
-		run_action.process_response(response)
+		self._execute(run_action)
 		
 		if type(run_action.error) is str:
 			print("ERROR: {error}.".format(error=run_action.error), file=sys.stderr)
@@ -95,11 +96,9 @@ class PeakInvestigator(object):
 		self._save_into_db(db, run_action.job, filename)
 	
 	def _fetch(self, job):
-		service = PeakInvestigatorSaaS()
 		status = StatusAction(self.VERSION, self._username, self._password, job)
 		
-		response = service.execute(status)
-		status.process_response(response)
+		self._execute(status)
 		
 		if not status.done:
 			print("INFO: Job {job} is not done.".format(job=job))
@@ -109,20 +108,18 @@ class PeakInvestigator(object):
 
 		sftp = SftpAction(self.VERSION, self._username, self._password,
 							self._project)
-		response = service.execute(sftp)
-		sftp.process_response(response)
+		self._execute(sftp)
 
-		service.download(sftp, status.results_file,
+		self._service.download(sftp, status.results_file,
 							posixpath.split(status.results_file)[-1])
-		service.download(sftp, status.log_file,
+		self._service.download(sftp, status.log_file,
 							posixpath.split(status.log_file)[-1])
 		
 	def _delete(self, job):
 		service = PeakInvestigatorSaaS()
 		delete = DeleteAction(self.VERSION, self._username, self._password, job)
 		
-		response = service.execute(delete)
-		delete.process_response(response)
+		self._execute(delete)
 		
 		if delete.error is not None:
 			print("ERROR: {}".format(delete.error), file=sys.stderr)
