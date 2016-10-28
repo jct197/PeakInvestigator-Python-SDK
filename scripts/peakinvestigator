@@ -5,11 +5,37 @@ import os.path
 import posixpath
 import sqlite3
 import math
+import gzip
 
 import numpy
 
 from peakinvestigator import *
 from peakinvestigator.actions import *
+
+class FileInfo(object):
+	
+	def __init__(self, filename):
+		self.filename = filename
+		if self.compressed:
+			self.open = gzip.open
+		else:
+			self.open = open
+
+	@property
+	def compressed(self):
+		with open(self.filename, "rb") as file:
+			magic = file.read(2)
+		
+		return magic.hex() == "1f8b"
+		
+	@property
+	def archive(self):
+		with self.open(self.filename, "rb") as file:
+			file.seek(257)
+			chars = file.read(5)
+		
+		return chars == b"ustar"
+
 
 class PeakInvestigator(object):
 	VERSION = "4.2"
