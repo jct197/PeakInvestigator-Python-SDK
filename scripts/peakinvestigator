@@ -89,7 +89,40 @@ class PeakInvestigator(object):
 			print("{job}\t{status}\t{file}".format(job=job[0],
 													file=job[1],
 													status=status_action.status))
+	
+	def _get_meta_data(self, filename):
+		info = FileInfo(filename)
+		if info.archive:
+			import io, tarfile
+			
+			with tarfile.open(filename) as file:
+				members = file.getmembers()
+			
+			if len([ x for x in members if not x.name.startswith("./._") ]) > 0:
+				print("Archive appears to have Mac-specific meta info. Exiting.")
+				sys.exit(-3)
+
+			members = [ x for x in members if not x.name.startswith("./._") ]
+			offsets = [ x.offset_data for x in members ]
+			sizes = [ x.size for x in members ]
+			
+			bytes = []
+			with info.open(filename, "r") as file:
+				for offset, size in zip(offsets, sizes):
+					file.seek(offset)
+					data = file.read(size)
+					bytes.append(io.BytesIO(data))
+					
+			datas = [ numpy.loadtxt(x) for x in bytes ]
+		else:
+			datas = [ numpy.loadtxt(filename) ]
+			
+		min_mass = min([ x[0, 0] for x in datas ])
+		max_mass = max([ x[-1, 0] for x in datas ])
+		max_lines = max( [ len(x) for x in datas ] )
 		
+		return math.floor(min_mass), math.ceil(max_mass), max_lines
+
 	def _init(self, filename):
 		versions_action = PiVersionsAction(self.VERSION, self._username,
 											self._password)
@@ -99,14 +132,11 @@ class PeakInvestigator(object):
 					file=stderr)
 			sys.exit(-2)
 		
-		data = numpy.loadtxt(filename)
-		min_mass = math.floor(data[0, 0])
-		max_mass = math.ceil(data[-1, 0])
-		lines = len(data)
+		meta_data = self._get_meta_data(filename)
 		
 		init_action = InitAction(self.VERSION, self._username, self._password,
 								self._project, versions_action.current_version)
-		init_action.with_scan_count(1, 0).with_meta_data(min_mass, max_mass, lines)
+		init_action.with_scan_count(1, 0).with_meta_data(*meta_data)
 		
 		self._execute(init_action)
 		return init_action
