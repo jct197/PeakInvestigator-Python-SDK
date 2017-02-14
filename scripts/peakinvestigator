@@ -38,7 +38,7 @@ class FileInfo(object):
 
 
 class PeakInvestigator(object):
-	VERSION = "4.2"
+	VERSION = "5.4"
 	MODES = ["submit", "list", "fetch", "fetch_all", "delete"]
 
 	_service = PeakInvestigatorSaaS()
