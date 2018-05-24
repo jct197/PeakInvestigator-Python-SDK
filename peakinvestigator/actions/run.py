@@ -24,7 +24,7 @@ class RunAction(BaseAction):
         
         """
         
-        super().__init__(version, username, password)
+        super(RunAction,self).__init__(version, username, password)
         self._jobID = jobID
         self._response_time_objective = response_time_objective
         
@@ -52,7 +52,7 @@ class RunAction(BaseAction):
     
     
     def build_query(self):
-        query = super().build_query()
+        query = super(RunAction,self).build_query()
         
         query["Action"] = "RUN"
         query["Job"] = self._jobID
@@ -66,6 +66,6 @@ class RunAction(BaseAction):
 
     @property
     def job(self):
-        super().precheck()
+        super(RunAction,self).precheck()
         return self._data["Job"]
     

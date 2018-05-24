@@ -20,12 +20,12 @@ class SftpAction(BaseAction):
         
         """
         
-        super().__init__(version, username, password)
+        super(SftpAction,self).__init__(version, username, password)
         self.project_id = project_id
         
     
     def build_query(self):
-        query = super().build_query()
+        query = super(SftpAction,self).build_query()
         query["Action"] = "SFTP"
         query["ID"] = self.project_id
         return query
@@ -35,7 +35,7 @@ class SftpAction(BaseAction):
     def host(self):
         """Host to use for SFTP transfers."""
         
-        super().precheck()
+        super(SftpAction,self).precheck()
         return self._data["Host"]
     
     
@@ -43,7 +43,7 @@ class SftpAction(BaseAction):
     def port(self):
         """Port to use for SFTP transfers."""
         
-        super().precheck()
+        super(SftpAction,self).precheck()
         return self._data["Port"]
     
     
@@ -51,7 +51,7 @@ class SftpAction(BaseAction):
     def directory(self):
         """Directory on SFTP server to place files."""
         
-        super().precheck()
+        super(SftpAction,self).precheck()
         return self._data["Directory"]
     
     
@@ -59,7 +59,7 @@ class SftpAction(BaseAction):
     def sftp_username(self):
         """Username for SFTP transfers."""
         
-        super().precheck()
+        super(SftpAction,self).precheck()
         return self._data["Login"]
     
     
@@ -67,7 +67,7 @@ class SftpAction(BaseAction):
     def sftp_password(self):
         """Password for SFTP transfers."""
         
-        super().precheck()
+        super(SftpAction,self).precheck()
         return self._data["Password"]
     
     
@@ -79,7 +79,7 @@ class SftpAction(BaseAction):
         
         """
         
-        super().precheck()
+        super(SftpAction,self).precheck()
         return self._data["Fingerprints"]
     
     

@@ -7,7 +7,6 @@
 # of the BSD 3-Clause license.
 
 
-from builtins import property
 from datetime import datetime
 
 from .base import BaseAction
@@ -21,11 +20,11 @@ class StatusAction(BaseAction):
     def __init__(self, version, username, password, job):
         """Constructor"""
         
-        super().__init__(version, username, password)
+        super(StatusAction,self).__init__(version, username, password)
         self._job = job
         
     def build_query(self):
-        query = super().build_query()
+        query = super(StatusAction,self).build_query()
         query["Action"] = "STATUS"
         query["Job"] = self._job
         return query
@@ -34,7 +33,7 @@ class StatusAction(BaseAction):
     def job(self):
         """Job identifier."""
         
-        super().precheck()
+        super(StatusAction,self).precheck()
         return self._data["Job"]
     
     @property
@@ -49,7 +48,7 @@ class StatusAction(BaseAction):
         
         """
         
-        super().precheck()
+        super(StatusAction,self).precheck()
         return self._data["Status"]
     
     @property
@@ -59,14 +58,14 @@ class StatusAction(BaseAction):
         
         """
         
-        super().precheck()
+        super(StatusAction,self).precheck()
         return self.status == "Done"
     
     @property
     def last_changed(self):
         """Date and time of last status change. Returns a datetime object."""
         
-        super().precheck()
+        super(StatusAction,self).precheck()
         return datetime.strptime(self._data["Datetime"], "%Y-%m-%d %H:%M:%S")
     
     @property
@@ -103,14 +102,14 @@ class StatusAction(BaseAction):
     def num_input_scans(self):
         """Number of scans provided as input."""
         
-        super().precheck()
+        super(StatusAction,self).precheck()
         return self._data["ScansInput"]
     
     @property
     def num_completed_scans(self):
         """Number of scans completed and provided in results file."""
         
-        super().precheck()
+        super(StatusAction,self).precheck()
         return self._data["ScansComplete"]
     
     

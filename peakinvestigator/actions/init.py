@@ -24,7 +24,7 @@ class InitAction(BaseAction):
         
         """
         
-        super().__init__(api_version, username, password)
+        super(InitAction,self).__init__(api_version, username, password)
         self.project_id = project_id
         self.pi_version = pi_version
         
@@ -83,7 +83,7 @@ class InitAction(BaseAction):
     
     
     def build_query(self):
-        query = super().build_query()
+        query = super(InitAction,self).build_query()
         query["Action"] = "INIT"
         query["ID"] = self.project_id
         query["PI_Version"] = self.pi_version
@@ -104,7 +104,7 @@ class InitAction(BaseAction):
     def job(self):
         """The job to be used in subsequent API calls (i.e. RUN, STATUS, and DELETE)."""
         
-        super().precheck()
+        super(InitAction,self).precheck()
         return self._data["Job"]
     
     
@@ -112,7 +112,7 @@ class InitAction(BaseAction):
     def id(self):
         """The (sub)project used in the INIT call."""
         
-        super().precheck()
+        super(InitAction,self).precheck()
         return self._data["ID"]
     
     
@@ -120,7 +120,7 @@ class InitAction(BaseAction):
     def funds(self):
         """The funds available to the project. Returns a Decimal object."""
         
-        super().precheck()
+        super(InitAction,self).precheck()
         return self._data["Funds"]
 
     
@@ -131,14 +131,14 @@ class InitAction(BaseAction):
         
         """
         
-        super().precheck()
+        super(InitAction,self).precheck()
         return self._data["EstimatedCost"]
     
     
     @property
     def instruments(self):
         """The type of instruments available for processing. Returns a set."""
-        super().precheck()
+        super(InitAction,self).precheck()
         return set([ x["Instrument"] for x in self._data["EstimatedCost"] ])
     
     
@@ -149,7 +149,7 @@ class InitAction(BaseAction):
         
         """
         
-        super().precheck()
+        super(InitAction,self).precheck()
         return set([ x["RTO"] for x in self._data["EstimatedCost"] ])
     
     
@@ -159,7 +159,7 @@ class InitAction(BaseAction):
         
         """
         
-        super().precheck()
+        super(InitAction,self).precheck()
         costs = [ x["Cost"] for x in self._data["EstimatedCost"] \
                     if x["Instrument"] == instrument and \
                         x["RTO"] == response_time_objective ]
