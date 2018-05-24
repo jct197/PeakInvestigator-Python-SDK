@@ -8,11 +8,13 @@
 
 
 from abc import ABCMeta, abstractmethod
+from six import add_metaclass
 import decimal
 
 import simplejson
 
-class BaseAction(metaclass=ABCMeta):
+@add_metaclass(ABCMeta)
+class BaseAction():
     """Abstract base class for a PeakInvestigator API action.
     """
 

@@ -18,11 +18,11 @@ class PiVersionsAction(BaseAction):
     def __init__(self, version, username, password):
         """Constructor"""
         
-        super().__init__(version, username, password)
+        super(PiVersionsAction,self).__init__(version, username, password)
 
 
     def build_query(self):
-        query = super().build_query()
+        query = super(PiVersionsAction,self).build_query()
         query["Action"] = "PI_VERSIONS"
         return query
     
@@ -35,7 +35,7 @@ class PiVersionsAction(BaseAction):
         
         """
         
-        super().precheck()
+        super(PiVersionsAction,self).precheck()
         return self._data["Current"]
 
 
@@ -48,7 +48,7 @@ class PiVersionsAction(BaseAction):
         
         """
         
-        super().precheck()
+        super(PiVersionsAction,self).precheck()
         return self._data["LastUsed"]
 
 
@@ -60,7 +60,7 @@ class PiVersionsAction(BaseAction):
         
         """
         
-        super().precheck()
+        super(PiVersionsAction,self).precheck()
         return int(self._data["Count"])
 
 
@@ -71,5 +71,5 @@ class PiVersionsAction(BaseAction):
         
         """
         
-        super().precheck()
+        super(PiVersionsAction,self).precheck()
         return self._data["Versions"]
