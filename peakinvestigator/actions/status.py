@@ -87,7 +87,7 @@ class StatusAction(BaseAction):
         if not self.done:
             raise Exception("Job is not done.")
         
-        return self._data["ResultsFile"]
+        return self._data["ResultFilePaths"]['MassList']
     
     @property
     def log_file(self):
@@ -96,7 +96,7 @@ class StatusAction(BaseAction):
         if not self.done:
             raise Exception("Job is not done.")
         
-        return self._data["JobLogFile"]
+        return self._data["ResultFilePaths"]['Log']
     
     @property
     def num_input_scans(self):
