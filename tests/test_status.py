@@ -13,6 +13,8 @@ from context import peakinvestigator
 
 from peakinvestigator.actions import *
 
+RESPONSE_1 = '{"Action":"STATUS", "Job":"P-504.5148", "Status":"Preparing", "Datetime":"2016-02-03 18:18:12"}'
+RESPONSE_2 = '{"Action":"STATUS", "Job":"P-504.5148", "Status":"Running", "Datetime":"2016-02-03 18:25:09"}'
 RESPONSE_3 = """{
   "Action": "STATUS",
   "Job": "P-504.5148",
@@ -30,6 +32,7 @@ RESPONSE_3 = """{
     "MassList": "\/files\/P-504.5148\/P-504.5148.mass_list.tar"
   }
 }"""
+RESPONSE_4 = '{"Action":"STATUS", "Job":"P-504.1463", "Status":"Deleted", "Datetime":"2016-02-03 18:36:05"}'
 
 
 class TestStatusAction(unittest.TestCase):
@@ -47,8 +50,7 @@ class TestStatusAction(unittest.TestCase):
         self.assertEqual("J-1234", query["Job"])
         
     def test_response1(self):
-        response = '{"Action":"STATUS", "Job":"P-504.5148", "Status":"Preparing", "Datetime":"2016-02-03 18:18:12"}'
-        self.action.process_response(response)
+        self.action.process_response(RESPONSE_1)
     
         self.assertEqual("P-504.5148", self.action.job)
         self.assertEqual("Preparing", self.action.status)
@@ -64,14 +66,11 @@ class TestStatusAction(unittest.TestCase):
         self.assertEqual(12, last_changed.second)
         
     def test_response2(self):
-        response = '{"Action":"STATUS", "Job":"P-504.5148", "Status":"Running", "Datetime":"2016-02-03 18:25:09"}'
-        self.action.process_response(response)
-        
+        self.action.process_response(RESPONSE_2)
         self.assertFalse(self.action.done)
         self.assertEqual("Running", self.action.status)
         
     def test_response3(self):
-
         self.action.process_response(RESPONSE_3)
         
         self.assertTrue(self.action.done)
@@ -85,12 +84,12 @@ class TestStatusAction(unittest.TestCase):
                             self.action.results_file)
         
     def test_response4(self):
-        response = '{"Action":"STATUS", "Job":"P-504.1463", "Status":"Deleted", "Datetime":"2016-02-03 18:36:05"}'
-        self.action.process_response(response)
+        self.action.process_response(RESPONSE_4)
         
         self.assertFalse(self.action.done)
         self.assertEqual("Deleted", self.action.status)
-        
+
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
