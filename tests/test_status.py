@@ -13,6 +13,25 @@ from context import peakinvestigator
 
 from peakinvestigator.actions import *
 
+RESPONSE_3 = """{
+  "Action": "STATUS",
+  "Job": "P-504.5148",
+  "Status": "Done",
+  "Datetime": "2016-02-03 18: 31: 05",
+  "ScansInput": 3,
+  "ScansComplete": 3,
+  "ActualCost": 0.36,
+  "ResultFiles": [
+    "Log",
+    "MassList"
+  ],
+  "ResultFilePaths": {
+    "Log": "\/files\/P-504.5148\/P-504.5148.log.txt",
+    "MassList": "\/files\/P-504.5148\/P-504.5148.mass_list.tar"
+  }
+}"""
+
+
 class TestStatusAction(unittest.TestCase):
     
     def setUp(self):
@@ -52,11 +71,8 @@ class TestStatusAction(unittest.TestCase):
         self.assertEqual("Running", self.action.status)
         
     def test_response3(self):
-        response = '{"Action":"STATUS", "Job":"P-504.5148", "Status":"Done", "Datetime":"2016-02-03 18:31:05", ' + \
-                    '"ScansInput":3, "ScansComplete":3, "ActualCost":0.36, ' + \
-                    '"JobLogFile":"/files/P-504.5148/P-504.5148.log.txt", ' + \
-                    '"ResultsFile":"/files/P-504.5148/P-504.5148.mass_list.tar"}'
-        self.action.process_response(response)
+
+        self.action.process_response(RESPONSE_3)
         
         self.assertTrue(self.action.done)
         self.assertEqual("Done", self.action.status)
