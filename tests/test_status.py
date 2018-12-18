@@ -1,6 +1,6 @@
 ## -*- coding: utf-8 -*-
 #
-# Copyright (c) 2016, Veritomyx, Inc.
+# Copyright (c) 2016-2018, Veritomyx, Inc.
 #
 # This file is part of the Python SDK for PeakInvestigator
 # (http://veritomyx.com) and is distributed under the terms
