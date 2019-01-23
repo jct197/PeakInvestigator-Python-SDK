@@ -13,7 +13,7 @@ import os
 
 logging.info('Progress')
 
-class LoggerProg(Progress):
+class LogProgress(Progress):
 
     def __init__(self, total, unit='scans'):
 
@@ -40,4 +40,4 @@ class LoggerProgress(ProgressFactory):
         pass
 
     def create(self, total, unit):
-        return LoggerProg(total, unit)
+        return LogProgress(total, unit)

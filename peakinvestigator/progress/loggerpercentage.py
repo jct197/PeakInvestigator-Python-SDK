@@ -13,7 +13,7 @@ import os
 
 logging.getLogger('Progress')
 
-class LoggerProgPer(Progress):
+class LogProgressPercent(Progress):
 
     def __init__(self, total, unit='scans'):
         self.total = total
@@ -37,10 +37,10 @@ class LoggerProgPer(Progress):
         sys.stdout.write('\n')
         self.logger.info('Finished upload of {} {}'.format(self.count, self.unit))
 
-class LoggerProgressPer(ProgressFactory):
+class LoggerProgressPercent(ProgressFactory):
 
     def __init__(self):
         pass
 
     def create(self, total, unit):
-        return LoggerProgPer(total, unit)
+        return LogProgressPercent(total, unit)
