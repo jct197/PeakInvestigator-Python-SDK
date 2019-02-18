@@ -31,9 +31,6 @@ class TestBinary(unittest.TestCase):
         data_points = []
         with open(filename, 'wb') as file:
             save_binary(headers, data_points, handle=file)
-
-        with open(filename, 'rb') as f:
-            buffer = f.read()
         with open(filename2, 'wb') as file:
             file.write(six.b(self.testempty[0]))
         test = filecmp.cmp(filename, filename2, shallow=False)
@@ -50,9 +47,6 @@ class TestBinary(unittest.TestCase):
         data_points = []
         with open(filename, 'wb') as file:
             save_binary(headers, data_points, handle=file)
-
-        with open(filename, 'rb') as f:
-            buffer = f.read()
         with open(filename2, 'wb') as file:
             file.write(six.b(self.testheader[0]))
         test = filecmp.cmp(filename, filename2, shallow=False)
@@ -69,8 +63,6 @@ class TestBinary(unittest.TestCase):
         data_points = [[1234.5,67.89],[1234.56,78.9],[1234.567,89.0]]
         with open(filename, 'wb') as file:
             save_binary(headers, data_points, handle=file)
-        with open(filename, 'rb') as f:
-            buffer = f.read()
         with open(filename2, 'wb') as file:
             file.write(six.b(self.testexample[0]))
         test = filecmp.cmp(filename, filename2, shallow=False)
