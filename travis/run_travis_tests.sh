@@ -12,4 +12,6 @@ python -m test_init &&
 python -m test_sftp &&
 python -m test_run &&
 python -m test_status &&
-python -m test_delete 
+python -m test_delete &&
+python -m test_upload &&
+python -m test_binary
