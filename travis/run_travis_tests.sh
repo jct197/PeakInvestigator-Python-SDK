@@ -14,4 +14,5 @@ python -m test_run &&
 python -m test_status &&
 python -m test_delete &&
 python -m test_upload &&
-python -m test_binary
+python -m test_binary &&
+python -m test_sandbox

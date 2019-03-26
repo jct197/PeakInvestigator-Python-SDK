@@ -1,6 +1,6 @@
 ## -*- coding: utf-8 -*-
 #
-# Copyright (c) 2016, Veritomyx, Inc.
+# Copyright (c) 2019, Veritomyx, Inc.
 #
 # This file is part of the Python SDK for PeakInvestigator
 # (http://veritomyx.com) and is distributed under the terms
@@ -13,3 +13,4 @@ from .upload import UploadAction
 from .run import RunAction
 from .status import StatusAction
 from .delete import DeleteAction
+from .sandbox import SandboxAction
