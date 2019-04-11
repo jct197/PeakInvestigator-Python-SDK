@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2019, Veritomyx, Inc.
 #
@@ -10,7 +10,7 @@ from .base import BaseAction
 class SandboxAction(BaseAction):
     """This class is used to make a call to the PeakInvestigator
     API via sandbox. See https://peakinvestigator.veritomyx.com/api/#SandBox.
-    
+
     """
 
     def __init__(self, action, sandboxoption=None):
@@ -27,7 +27,7 @@ class SandboxAction(BaseAction):
             query['Sandbox'] = '0'
         return query
 
-    def process_response(self,response):
+    def process_response(self, response):
         """Process response through sandbox."""
         return self.action.process_response(response)
 

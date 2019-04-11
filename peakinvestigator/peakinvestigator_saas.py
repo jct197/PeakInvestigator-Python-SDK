@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2019, Veritomyx, Inc.
 #
@@ -16,58 +16,58 @@ from peakinvestigator.progress.uploader import Uploader
 
 
 class PeakInvestigatorSaaS(object):
-    """"An object for interacting with the PeakInvestigator API. See 
-    http://veritomyx.com for more information about PeakInvestigtor and 
+    """"An object for interacting with the PeakInvestigator API. See
+    http://veritomyx.com for more information about PeakInvestigtor and
     https://peakinvestigator.veritomyx.com/api for information about the
     public API.
-    
+
     Here's an example::
-    
+
         service = PeakInvestigatorSaaS("https://peakinvestigator.veritomyx.com")
         action = PiVersionsAction("4.2", "joe", "badpw")
         response = service.execute(action)
         action.process_response(response)
-        
+
     See other documentation for more details.
-    
+
     """
 
     def __init__(self, *args, **kwds):
-        """Constructor. If the 'server' keyword is specified, that is used for 
-        the API calls. Otherwise, it will try to use the first argument. Note 
+        """Constructor. If the 'server' keyword is specified, that is used for
+        the API calls. Otherwise, it will try to use the first argument. Note
         that only the hostname without any path should be specified. If neither
         keywords or arguments are specified, it will default to
         https://peakinvestigator.veritomyx.com.
-        
+
         https:// will be pre-pended if it is missing.
-                     
+
         """
-        
+
         if "server" in kwds:
             server = kwds["server"]
         elif len(args) > 0:
             server = args[0]
         else:
             server = "https://peakinvestigator.veritomyx.com"
-            
+
         if "http" not in server:
             server = "https://" + server
-            
+
         self._server = server
-        
+
     def execute(self, action):
         """Call the API with the given action. An action should implement a
-        build_query() method that returns a dictionary containing the 
+        build_query() method that returns a dictionary containing the
         appropriate parameters for the HTTP POST request.
-        
+
         This method returns the response from the server as a string, which
         is usually processed with the same action.
-        
+
         """
-        
+
         response = requests.post(self._server + "/api/", data=action.build_query())
         return response.text
-        
+
     def upload(self, upload_action, local_file, progress_factory, num_scan=0):
         """Upload file to a SFTP server"""
         upload_action.num = num_scan
@@ -87,7 +87,7 @@ class PeakInvestigatorSaaS(object):
 
     def download(self, sftp_action, remote_file, local_file, callback=None):
         """Download a file from a SFTP server."""
-        
+
         with SSHClient() as ssh:
             ssh.set_missing_host_key_policy(WarningPolicy())
             ssh.connect(sftp_action.host, port=sftp_action.port,

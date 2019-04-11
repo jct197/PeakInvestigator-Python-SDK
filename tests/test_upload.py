@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2016, Veritomyx, Inc.
 #
@@ -30,7 +30,6 @@ class TestUploadAction(unittest.TestCase):
     def test_response(self):
         response = '{"Action":"UPLOAD", "Host":"peakinvestigator.veritomyx.com", "Port":"22022", "Token": "640f89508eba4d9e8b5951fb083e97ac"}'
         self.action.process_response(response)
-
         self.assertEqual("peakinvestigator.veritomyx.com", self.action.host)
         self.assertEqual("22022", self.action.port)
         self.assertEqual("640f89508eba4d9e8b5951fb083e97ac", self.action.token)

@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2016, Veritomyx, Inc.
 #
@@ -14,4 +14,3 @@ setup(name="PeakInvestigator Python SDK", version="0.9",
         author_email="adam.tenderholt@veritomyx.com",
         url="http://veritomyx.com",
         packages=["peakinvestigator", "peakinvestigator.actions"])
-

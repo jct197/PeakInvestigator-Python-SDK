@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2019, Veritomyx, Inc.
 #
@@ -26,8 +26,8 @@ class LogProgressPercent(Progress):
     def update(self, update):
         self.count += update
         current = time.time()
-        if round(self.count/self.total*100,0) % 10 == 0:
-            sys.stdout.write('\r'+str(round(self.count/self.total*100,0))+str(' Percent'))
+        if round(self.count/self.total*100, 0) % 10 == 0:
+            sys.stdout.write('\r'+str(round(self.count/self.total*100, 0))+str(' Percent'))
         if current - self.clock > 30:
             sys.stdout.write('\n')
             self.logger.info('Finished uploading {} of {} {}.'.format(self.count, self.total, self.unit))

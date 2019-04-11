@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2016, Veritomyx, Inc.
 #
@@ -31,28 +31,21 @@ class UploadAction(BaseAction):
 
     @property
     def host(self):
-        """Returns host.
-
-        """
+        """Returns host."""
 
         super(UploadAction, self).precheck()
         return self._data["Host"]
 
     @property
     def port(self):
-        """Returns port.
-
-        """
+        """Returns port."""
 
         super(UploadAction, self).precheck()
         return self._data["Port"]
 
     @property
     def token(self):
-        """Returns token for upload.
-
-        """
+        """Returns token for upload."""
 
         super(UploadAction, self).precheck()
         return self._data["Token"]
-

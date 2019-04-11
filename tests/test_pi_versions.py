@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2016, Veritomyx, Inc.
 #
@@ -20,16 +20,16 @@ class TestPiVersionsAction(unittest.TestCase):
 
     def test_build_query(self):
         query = self.action.build_query()
-        
+
         self.assertIn("Version", query)
         self.assertEqual("4.2", query["Version"])
-        
+
         self.assertIn("User", query)
         self.assertEqual("joe", query["User"])
 
         self.assertIn("Code", query)
         self.assertEqual("badpw", query["Code"])
-        
+
         self.assertIn("Action", query)
         self.assertEqual("PI_VERSIONS", query["Action"])
 
@@ -37,18 +37,18 @@ class TestPiVersionsAction(unittest.TestCase):
     def test_response(self):
         response = '{"Action":"PI_VERSIONS", "Current":"1.2", "LastUsed":"", "Count":2, "Versions":["1.2", "1.0.0"]}'
         self.action.process_response(response)
-        
+
         self.assertEqual(self.action.current_version, "1.2")
         self.assertEqual(self.action.last_used, "")
         self.assertEqual(self.action.count, 2)
         self.assertListEqual(self.action.versions, ["1.2", "1.0.0"])
         self.assertIsNone(self.action.error)
-        
+
 
     def test_error(self):
         response = '{"Action":"PI_VERSIONS", "Error":3, "Message":"Invalid username or password - can not validate"}'
         self.action.process_response(response)
-        
+
         self.assertEqual(self.action.error, "Invalid username or password - can not validate")
         
 if __name__ == "__main__":
