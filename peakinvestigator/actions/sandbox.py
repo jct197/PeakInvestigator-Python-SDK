@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2019, Veritomyx, Inc.
 #
@@ -7,10 +7,11 @@
 # of the BSD 3-Clause license.
 from .base import BaseAction
 
+
 class SandboxAction(BaseAction):
     """This class is used to make a call to the PeakInvestigator
     API via sandbox. See https://peakinvestigator.veritomyx.com/api/#SandBox.
-    
+
     """
 
     def __init__(self, action, sandboxoption=None):
@@ -21,13 +22,13 @@ class SandboxAction(BaseAction):
     def build_query(self):
         """Build query through sandbox."""
         query = self.action.build_query()
-        if self.sandboxoption != None:
+        if self.sandboxoption is not None:
             query['Sandbox'] = self.sandboxoption
         else:
             query['Sandbox'] = '0'
         return query
 
-    def process_response(self,response):
+    def process_response(self, response):
         """Process response through sandbox."""
         return self.action.process_response(response)
 

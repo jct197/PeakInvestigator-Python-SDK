@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2019, Veritomyx, Inc.
 #
@@ -8,6 +8,7 @@
 from abc import ABCMeta, abstractmethod
 from six import add_metaclass
 
+
 @add_metaclass(ABCMeta)
 class ProgressFactory():
 
@@ -15,6 +16,7 @@ class ProgressFactory():
     def create(self, total, unit):
         """return an implementation of progress"""
         print("Not implemented")
+
 
 @add_metaclass(ABCMeta)
 class Progress():

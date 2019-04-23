@@ -1,17 +1,18 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2019, Veritomyx, Inc.
 #
 # This file is part of the Python SDK for PeakInvestigator
 # (http://veritomyx.com) and is distributed under the terms
 # of the BSD 3-Clause license.
-from peakinvestigator.progress.progress import *
+from peakinvestigator.progress.progress import Progress, ProgressFactory
 import logging
 import time
 import sys
-import os
+
 
 logging.getLogger('Progress')
+
 
 class LogProgressPercent(Progress):
 
@@ -26,16 +27,20 @@ class LogProgressPercent(Progress):
     def update(self, update):
         self.count += update
         current = time.time()
-        if round(self.count/self.total*100,0) % 10 == 0:
-            sys.stdout.write('\r'+str(round(self.count/self.total*100,0))+str(' Percent'))
+        if round(self.count/self.total*100, 0) % 10 == 0:
+            sys.stdout.write('\r'+str(round(self.count/self.total*100,
+                                            0))+str(' Percent'))
         if current - self.clock > 30:
             sys.stdout.write('\n')
-            self.logger.info('Finished uploading {} of {} {}.'.format(self.count, self.total, self.unit))
+            self.logger.info('Finished uploading {} of {} '
+                             '{}.'.format(self.count, self.total, self.unit))
             self.clock = current
 
     def close(self):
         sys.stdout.write('\n')
-        self.logger.info('Finished upload of {} {}'.format(self.count, self.unit))
+        self.logger.info('Finished upload of '
+                         '{} {}'.format(self.count, self.unit))
+
 
 class LoggerProgressPercent(ProgressFactory):
 

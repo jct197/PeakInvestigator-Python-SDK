@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2016, Veritomyx, Inc.
 #
@@ -12,22 +12,21 @@ from context import peakinvestigator
 
 from peakinvestigator.actions import *
 
+
 class TestSftpAction(unittest.TestCase):
-    
+
     def setUp(self):
         self.action = SftpAction("4.2", "joe", "badpw", 1234)
-    
-    
+
     def test_build_query(self):
         query = self.action.build_query()
-        
+
         self.assertEqual("SFTP", query["Action"])
         self.assertEqual("4.2", query["Version"])
         self.assertEqual("joe", query["User"])
         self.assertEqual("badpw", query["Code"])
         self.assertEqual(1234, query["ID"])
-        
-    
+
     def test_response(self):
         response = '{"Action":"SFTP", "Host":"peakinvestigator.veritomyx.com", ' + \
                         '"Port":22022, "Directory":"/files", "Login":"Vt504", ' + \
@@ -39,14 +38,14 @@ class TestSftpAction(unittest.TestCase):
                         '{"Signature":"ECDSA","Algorithm":"SHA256","Hash":"d2HXgeUSmWN+gq+9V7Wad5xWaCxk+mh45F81K951MCU"}, ' + \
                         '{"Signature":"RSA","Algorithm":"MD5","Hash":"d2:be:b8:2e:3c:be:84:e4:a3:0a:c8:42:5c:6b:39:4e"}, ' + \
                         '{"Signature":"RSA","Algorithm":"SHA256","Hash":"QBsg8ejj4gZun4AWd4WBTJw89ftcLR9x/dZoG223srg"}]}'
-        self.action.process_response(response) 
-        
+        self.action.process_response(response)
+
         self.assertEqual("peakinvestigator.veritomyx.com", self.action.host)
         self.assertEqual(22022, self.action.port)
         self.assertEqual("/files", self.action.directory)
         self.assertEqual("Vt504", self.action.sftp_username)
         self.assertEqual("0UtnWMvzoi2jF4BQ", self.action.sftp_password)
-        
+
+
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

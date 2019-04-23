@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2019, Veritomyx, Inc.
 #
@@ -9,7 +9,8 @@ import zlib
 import struct
 import six
 
-def save_binary(headers,data_points,handle):
+
+def save_binary(headers, data_points, handle):
     for item in headers:
         handle.write(six.b("# %s" % item))
     handle.write(six.b('$'))

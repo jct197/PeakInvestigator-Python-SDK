@@ -1,17 +1,16 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2019, Veritomyx, Inc.
 #
 # This file is part of the Python SDK for PeakInvestigator
 # (http://veritomyx.com) and is distributed under the terms
 # of the BSD 3-Clause license.
-from peakinvestigator.progress.progress import *
+from peakinvestigator.progress.progress import Progress, ProgressFactory
 import logging
 import time
-import sys
-import os
 
 logging.info('Progress')
+
 
 class LogProgress(Progress):
 
@@ -29,11 +28,15 @@ class LogProgress(Progress):
         self.count += update
         current = time.time()
         if current - self.clock > 30:
-            self.logger.info('Finished uploading {} of {} {}.'.format(self.count, self.total, self.unit))
+            self.logger.info('Finished uploading {} of '
+                             '{} {}.'.format(self.count,
+                                             self.total, self.unit))
             self.clock = current
 
     def close(self):
-        self.logger.info('Finished upload of {} {}'.format(self.count, self.unit))
+        self.logger.info('Finished upload of '
+                         '{} {}'.format(self.count, self.unit))
+
 
 class LoggerProgress(ProgressFactory):
     def __init__(self):
