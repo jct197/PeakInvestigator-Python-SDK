@@ -34,8 +34,15 @@ class TestPiVersionsAction(unittest.TestCase):
         self.assertEqual("PI_VERSIONS", query["Action"])
 
     def test_response(self):
-        response = '{"Action":"PI_VERSIONS", "Current":"1.2", ' \
-                   '"LastUsed":"", "Count":2, "Versions":["1.2", "1.0.0"]}'
+        response = """
+        {
+            "Action":"PI_VERSIONS",
+            "Current":"1.2",
+            "LastUsed":"",
+            "Count":2,
+            "Versions":["1.2", "1.0.0"]
+        }
+        """
         self.action.process_response(response)
 
         self.assertEqual(self.action.current_version, "1.2")
@@ -45,8 +52,13 @@ class TestPiVersionsAction(unittest.TestCase):
         self.assertIsNone(self.action.error)
 
     def test_error(self):
-        response = '{"Action":"PI_VERSIONS", "Error":3, "Message":' \
-                   '"Invalid username or password - can not validate"}'
+        response = """
+        {
+        "Action":"PI_VERSIONS",
+        "Error":3,
+        "Message":"Invalid username or password - can not validate"
+        }
+        """
         self.action.process_response(response)
 
         self.assertEqual(self.action.error,

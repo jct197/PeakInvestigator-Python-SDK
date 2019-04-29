@@ -13,29 +13,49 @@ from context import peakinvestigator
 
 from peakinvestigator.actions import *
 
-RESPONSE_1 = '{"Action":"STATUS", "Job":"P-504.5148", ' \
-             '"Status":"Preparing", "Datetime":"2016-02-03 18:18:12"}'
-RESPONSE_2 = '{"Action":"STATUS", "Job":"P-504.5148", ' \
-             '"Status":"Running", "Datetime":"2016-02-03 18:25:09"}'
-RESPONSE_3 = """{
-  "Action": "STATUS",
-  "Job": "P-504.5148",
-  "Status": "Done",
-  "Datetime": "2016-02-03 18: 31: 05",
-  "ScansInput": 3,
-  "ScansComplete": 3,
-  "ActualCost": 0.36,
-  "ResultFiles": [
-    "Log",
-    "MassList"
-  ],
-  "ResultFilePaths": {
-    "Log": "\/files\/P-504.5148\/P-504.5148.log.txt",
-    "MassList": "\/files\/P-504.5148\/P-504.5148.mass_list.tar"
-  }
-}"""
-RESPONSE_4 = '{"Action":"STATUS", "Job":"P-504.1463", ' \
-             '"Status":"Deleted", "Datetime":"2016-02-03 18:36:05"}'
+RESPONSE_1 = """
+    {
+        "Action":"STATUS",
+        "Job":"P-504.5148",
+        "Status":"Preparing",
+        "Datetime":"2016-02-03 18:18:12"
+    }
+    """
+RESPONSE_2 = """
+    {
+        "Action":"STATUS",
+        "Job":"P-504.5148",
+        "Status":"Running",
+        "Datetime":"2016-02-03 18:25:09"
+    }
+    """
+RESPONSE_3 = """
+    {
+        "Action": "STATUS",
+        "Job": "P-504.5148",
+        "Status": "Done",
+        "Datetime": "2016-02-03 18: 31: 05",
+        "ScansInput": 3,
+        "ScansComplete": 3,
+        "ActualCost": 0.36,
+        "ResultFiles": [
+            "Log",
+            "MassList"
+        ],
+        "ResultFilePaths": {
+            "Log": "\/files\/P-504.5148\/P-504.5148.log.txt",
+            "MassList": "\/files\/P-504.5148\/P-504.5148.mass_list.tar"
+        }
+    }
+    """
+RESPONSE_4 = """
+    {
+        "Action":"STATUS",
+        "Job":"P-504.1463",
+        "Status":"Deleted",
+        "Datetime":"2016-02-03 18:36:05"
+    }
+    """
 
 
 class TestStatusAction(unittest.TestCase):

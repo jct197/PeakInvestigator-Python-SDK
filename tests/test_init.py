@@ -72,14 +72,30 @@ class TestInitAction(unittest.TestCase):
         self.assertEqual(1800, query["EndMass"])
 
     def test_response(self):
-        response = '{"Action":"INIT", "Job":"V-504.1551", ' \
-                   '"ID":504, "Funds":115.01, ' + \
-                        '"EstimatedCost":[{"Instrument":"TOF", ' \
-                        '"RTO":"RTO-24", "Cost":27.60}, ' + \
-                        '{"Instrument":"Orbitrap", "RTO":"RTO-24", ' \
-                        '"Cost":36.22}, ' + \
-                        '{"Instrument":"IonTrap", "RTO":"RTO-24", ' \
-                        '"Cost":32.59}]}'
+        response = """
+        {
+            "Action": "INIT",
+            "Job": "V-504.1551",
+            "ID": 504,
+            "Funds": 115.01,
+            "EstimatedCost": [{
+                    "Instrument": "TOF",
+                    "RTO": "RTO-24",
+                    "Cost": 27.60
+                },
+                {
+                    "Instrument": "Orbitrap",
+                    "RTO": "RTO-24",
+                    "Cost": 36.22
+                },
+                {
+                    "Instrument": "IonTrap",
+                    "RTO": "RTO-24",
+                    "Cost": 32.59
+                }
+            ]
+        }
+        """
         self.action.process_response(response)
 
         self.assertEqual("V-504.1551", self.action.job)

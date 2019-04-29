@@ -28,8 +28,13 @@ class TestDeleteAction(unittest.TestCase):
         self.assertEqual("J-1234", query["Job"])
 
     def test_response(self):
-        response = '{"Action":"DELETE", "Job":"P-504.4256", ' \
-                   '"Datetime":"2016-02-03 18:35:06"}'
+        response = """
+        {
+            "Action":"DELETE",
+            "Job":"P-504.4256",
+            "Datetime":"2016-02-03 18:35:06"
+        }
+        """
         self.action.process_response(response)
 
         self.assertEqual("P-504.4256", self.action.job)

@@ -65,7 +65,7 @@ class TestSandboxAction(unittest.TestCase):
         """Test Sandbox using Run Action"""
         actionRun = SandboxAction(
             RunAction("5.1", "user", "password", "100", "RTO-24")
-                .with_files("production.data.tar", "calibration.data.tar"))
+            .with_files("production.data.tar", "calibration.data.tar"))
         response = """
         {
             "Action": "RUN",
