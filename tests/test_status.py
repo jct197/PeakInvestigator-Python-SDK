@@ -43,8 +43,8 @@ RESPONSE_3 = """
             "MassList"
         ],
         "ResultFilePaths": {
-            "Log": "\/files\/P-504.5148\/P-504.5148.log.txt",
-            "MassList": "\/files\/P-504.5148\/P-504.5148.mass_list.tar"
+            "Log": "/files/P-504.5148/P-504.5148.log.txt",
+            "MassList": "/files/P-504.5148/P-504.5148.mass_list.tar"
         }
     }
     """
